@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Quadratic Explorer - Advanced with Gemini</title>
+    <title>Interactive Quadratic Explorer - Enhanced</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true
+          },
+          svg: {
+            fontCache: 'global'
+          },
+          startup: {
+            ready: () => {
+              MathJax.startup.defaultReady();
+            }
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -40,11 +59,12 @@
         }
         .slider-group input[type="range"], .input-group input[type="text"], .input-group input[type="password"] {
             width: 100%;
-            cursor: pointer;
+            /* cursor: pointer; remove for text/password, keep for range */
             border-radius: 0.375rem; /* rounded-md */
             border: 1px solid #d1d5db; /* Tailwind gray-300 */
             padding: 0.5rem; /* py-2 px-2 */
         }
+        .slider-group input[type="range"] { cursor: pointer; }
          .input-group input[type="text"]:focus, .input-group input[type="password"]:focus {
             border-color: #3b82f6; /* Tailwind blue-500 */
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Tailwind blue-500 focus ring */
@@ -101,8 +121,17 @@
             border-radius: 0.375rem; /* rounded-md */
             font-size: 0.875rem; /* text-sm */
             color: #3730a3; /* Tailwind indigo-800 */
-            white-space: pre-wrap; /* Preserve line breaks from Gemini */
+            /* white-space: pre-wrap; Let Markdown/MathJax handle formatting */
         }
+        .gemini-explanation ul, .gemini-explanation ol {
+            list-style-position: inside;
+            padding-left: 1rem; /* Add some padding for lists */
+        }
+        .gemini-explanation ul { list-style-type: disc; }
+        .gemini-explanation ol { list-style-type: decimal; }
+        .gemini-explanation p { margin-bottom: 0.5rem; }
+
+
         .loading-spinner {
             border: 4px solid #f3f3f3; /* Light grey */
             border-top: 4px solid #3b82f6; /* Blue */
@@ -127,8 +156,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 100%; /* Make buttons full width of their container */
-            margin-top: 0.5rem; /* Add some space between buttons */
+            width: 100%; 
+            margin-top: 0.5rem; 
         }
         .gemini-button:hover {
             background-color: #4338ca; /* Tailwind indigo-700 */
@@ -160,19 +189,24 @@
                     <h3 class="text-blue-600">Curve 1: y = a₁x² + b₁x + c₁</h3>
                     <div class="slider-group">
                         <label for="sliderA1">Coefficient a₁: <span id="valueA1" class="value-display text-blue-500">1.0</span></label>
-                        <input type="range" id="sliderA1" min="-15" max="15" value="1" step="0.2" class="rounded-lg accent-blue-500">
+                        <input type="range" id="sliderA1" min="-5" max="5" value="1" step="0.1" class="rounded-lg accent-blue-500">
                     </div>
                     <div class="slider-group">
                         <label for="sliderB1">Coefficient b₁: <span id="valueB1" class="value-display text-blue-500">0.0</span></label>
-                        <input type="range" id="sliderB1" min="-15" max="15" value="0" step="0.2" class="rounded-lg accent-blue-500">
+                        <input type="range" id="sliderB1" min="-10" max="10" value="0" step="0.1" class="rounded-lg accent-blue-500">
                     </div>
                     <div class="slider-group">
                         <label for="sliderC1">Coefficient c₁: <span id="valueC1" class="value-display text-blue-500">0.0</span></label>
-                        <input type="range" id="sliderC1" min="-15" max="15" value="0" step="0.2" class="rounded-lg accent-blue-500">
+                        <input type="range" id="sliderC1" min="-10" max="10" value="0" step="0.1" class="rounded-lg accent-blue-500">
                     </div>
                     <div id="equationDisplay1" class="equation-display text-blue-700">
                         y = 1.00x² + 0.00x + 0.00
                     </div>
+                     <div class="slider-group mt-4">
+                        <label for="sliderExploreX1">Explore x-value on Curve 1: <span id="valueExploreX1" class="value-display text-blue-500">0.0</span></label>
+                        <input type="range" id="sliderExploreX1" min="-10" max="10" value="0" step="0.1" class="rounded-lg accent-blue-500">
+                    </div>
+
                     <button id="explainCurve1Button" class="gemini-button">
                         ✨ Explain Curve 1 Characteristics
                     </button>
@@ -246,6 +280,8 @@
         const valueB1 = document.getElementById('valueB1');
         const valueC1 = document.getElementById('valueC1');
         const equationDisplay1 = document.getElementById('equationDisplay1');
+        const sliderExploreX1 = document.getElementById('sliderExploreX1'); // New slider
+        const valueExploreX1 = document.getElementById('valueExploreX1');   // Display for new slider value
         
         const explainCurve1Button = document.getElementById('explainCurve1Button');
         const geminiExplanationCurve1 = document.getElementById('geminiExplanationCurve1');
@@ -254,7 +290,6 @@
         const explainRootsButton = document.getElementById('explainRootsButton');
         const geminiRootsExplanation = document.getElementById('geminiRootsExplanation');
         const geminiRootsExplanationLoading = document.getElementById('geminiRootsExplanationLoading');
-
 
         // DOM Elements for Curve 2
         const curve2ControlsContainer = document.getElementById('curve2ControlsContainer');
@@ -267,7 +302,7 @@
         const equationDisplay2 = document.getElementById('equationDisplay2');
 
         // Global Controls
-        const apiKeyInput = document.getElementById('apiKeyInput'); // New API Key input
+        const apiKeyInput = document.getElementById('apiKeyInput'); 
         const toggleCurve2Checkbox = document.getElementById('toggleCurve2');
         const integerIncrementsCheckbox = document.getElementById('integerIncrements');
         const autoZoomToggleCheckbox = document.getElementById('autoZoomToggle');
@@ -279,18 +314,8 @@
         const ctx = canvas.getContext('2d');
         const graphContainer = document.querySelector('.graph-container');
 
-
-        // Graph parameters
-        let xMinDefault = -10;
-        let xMaxDefault = 10;
-        let yMinDefault = -20;
-        let yMaxDefault = 20;
-
-        let currentXMin = xMinDefault;
-        let currentXMax = xMaxDefault;
-        let currentYMin = yMinDefault;
-        let currentYMax = yMaxDefault;
-
+        let xMinDefault = -10, xMaxDefault = 10, yMinDefault = -20, yMaxDefault = 20;
+        let currentXMin = xMinDefault, currentXMax = xMaxDefault, currentYMin = yMinDefault, currentYMax = yMaxDefault;
         let canvasWidth, canvasHeight;
 
         function resizeCanvas() {
@@ -301,77 +326,40 @@
             drawAllCurves();
         }
 
-        function toCanvasX(x) {
-            return (x - currentXMin) / (currentXMax - currentXMin) * canvasWidth;
-        }
-
-        function toCanvasY(y) {
-            return canvasHeight - (y - currentYMin) / (currentYMax - currentYMin) * canvasHeight;
-        }
+        function toCanvasX(x) { return (x - currentXMin) / (currentXMax - currentXMin) * canvasWidth; }
+        function toCanvasY(y) { return canvasHeight - (y - currentYMin) / (currentYMax - currentYMin) * canvasHeight; }
 
         function drawAxes() {
-            ctx.beginPath();
-            ctx.strokeStyle = '#9ca3af'; 
-            ctx.lineWidth = 1;
-
+            ctx.beginPath(); ctx.strokeStyle = '#9ca3af'; ctx.lineWidth = 1;
             const originXCanvas = toCanvasX(0);
-            if (originXCanvas >= 0 && originXCanvas <= canvasWidth) {
-                ctx.moveTo(originXCanvas, 0);
-                ctx.lineTo(originXCanvas, canvasHeight);
-            }
-
+            if (originXCanvas >= 0 && originXCanvas <= canvasWidth) { ctx.moveTo(originXCanvas, 0); ctx.lineTo(originXCanvas, canvasHeight); }
             const originYCanvas = toCanvasY(0);
-            if (originYCanvas >= 0 && originYCanvas <= canvasHeight) {
-                ctx.moveTo(0, originYCanvas);
-                ctx.lineTo(canvasWidth, originYCanvas);
-            }
+            if (originYCanvas >= 0 && originYCanvas <= canvasHeight) { ctx.moveTo(0, originYCanvas); ctx.lineTo(canvasWidth, originYCanvas); }
             ctx.stroke();
-
-            ctx.fillStyle = '#6b7280'; 
-            ctx.font = '10px Inter';
-
-            const xRange = currentXMax - currentXMin;
-            const yRange = currentYMax - currentYMin;
-
+            ctx.fillStyle = '#6b7280'; ctx.font = '10px Inter';
+            const xRange = currentXMax - currentXMin, yRange = currentYMax - currentYMin;
             const numXTicks = Math.min(10, Math.max(2, Math.floor(canvasWidth / 80)));
             const numYTicks = Math.min(10, Math.max(2, Math.floor(canvasHeight / 50)));
-
-            let xTickStep = Math.max(0.1, xRange / numXTicks); 
-            let yTickStep = Math.max(0.1, yRange / numYTicks); 
-
+            let xTickStep = Math.max(0.1, xRange / numXTicks), yTickStep = Math.max(0.1, yRange / numYTicks);
             function getNiceTickStep(range, numTicks) {
-                const roughStep = range / numTicks;
-                if (!isFinite(roughStep) || roughStep === 0) return 1; 
-                
-                let exponent = Math.floor(Math.log10(roughStep));
-                let mantissa = roughStep / Math.pow(10, exponent);
-
-                if (mantissa > 5) return Math.pow(10, exponent + 1);
-                if (mantissa > 2) return 5 * Math.pow(10, exponent);
-                if (mantissa > 1) return 2 * Math.pow(10, exponent);
-                return Math.pow(10, exponent);
+                const roughStep = range / numTicks; if (!isFinite(roughStep) || roughStep === 0) return 1;
+                let exponent = Math.floor(Math.log10(roughStep)), mantissa = roughStep / Math.pow(10, exponent);
+                if (mantissa > 5) return Math.pow(10, exponent + 1); if (mantissa > 2) return 5 * Math.pow(10, exponent);
+                if (mantissa > 1) return 2 * Math.pow(10, exponent); return Math.pow(10, exponent);
             }
-            xTickStep = getNiceTickStep(xRange,numXTicks);
-            yTickStep = getNiceTickStep(yRange,numYTicks);
-
+            xTickStep = getNiceTickStep(xRange,numXTicks); yTickStep = getNiceTickStep(yRange,numYTicks);
             for (let i = Math.ceil(currentXMin / xTickStep) * xTickStep; i <= currentXMax; i += xTickStep) {
                 if (Math.abs(i) < xTickStep / 100 && i !== 0 && originXCanvas >=0 && originXCanvas <= canvasWidth) continue;
-                const xPos = toCanvasX(i);
-                if (xPos < 0 || xPos > canvasWidth + 1) continue; 
-                ctx.moveTo(xPos, originYCanvas - 5);
-                ctx.lineTo(xPos, originYCanvas + 5);
+                const xPos = toCanvasX(i); if (xPos < 0 || xPos > canvasWidth + 1) continue;
+                ctx.moveTo(xPos, originYCanvas - 5); ctx.lineTo(xPos, originYCanvas + 5);
                 ctx.fillText(i.toFixed(i % 1 === 0 ? 0 : (xTickStep < 1 ? 2 : 1) ), xPos - (i < 0 ? 10 : 5), originYCanvas + 15);
             }
-
             for (let i = Math.ceil(currentYMin / yTickStep) * yTickStep; i <= currentYMax; i += yTickStep) {
                  if (Math.abs(i) < yTickStep / 100 && i !== 0 && originYCanvas >=0 && originYCanvas <= canvasHeight) continue;
-                const yPos = toCanvasY(i);
-                 if (yPos < -1 || yPos > canvasHeight +1 ) continue; 
-                ctx.moveTo(originXCanvas - 5, yPos);
-                ctx.lineTo(originXCanvas + 5, yPos);
+                const yPos = toCanvasY(i); if (yPos < -1 || yPos > canvasHeight +1 ) continue;
+                ctx.moveTo(originXCanvas - 5, yPos); ctx.lineTo(originXCanvas + 5, yPos);
                 ctx.fillText(i.toFixed(i % 1 === 0 ? 0 : (yTickStep < 1 ? 2 : 1)), originXCanvas + 8, yPos + 3);
             }
-            
             if (originXCanvas >= 0 && originXCanvas <= canvasWidth && originYCanvas >= 0 && originYCanvas <= canvasHeight) {
                  ctx.fillText("0", originXCanvas + 5, originYCanvas + 12);
             }
@@ -379,73 +367,106 @@
         }
 
         function plotSingleCurve(a, b, c, color) {
-            ctx.beginPath();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 2;
-
-            const plotStep = (currentXMax - currentXMin) / (canvasWidth * 2); 
-            let firstPoint = true;
-
-            for (let x = currentXMin; x <= currentXMax + plotStep ; x += plotStep) { 
+            ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2;
+            const plotStep = (currentXMax - currentXMin) / (canvasWidth * 2); let firstPoint = true;
+            for (let x = currentXMin; x <= currentXMax + plotStep ; x += plotStep) {
                 const y = a * x * x + b * x + c;
-                const canvasX = toCanvasX(x); 
-                const canvasY = toCanvasY(y); 
-
-                if (canvasY > -canvasHeight * 0.5 && canvasY < canvasHeight * 1.5) { 
-                    if (firstPoint) {
-                        ctx.moveTo(canvasX, canvasY);
-                        firstPoint = false;
-                    } else {
-                        ctx.lineTo(canvasX, canvasY);
-                    }
-                } else {
-                    if (!firstPoint) { 
-                        ctx.stroke();
-                    }
-                    ctx.beginPath(); 
-                    firstPoint = true;
-                }
+                const canvasX = toCanvasX(x), canvasY = toCanvasY(y);
+                if (canvasY > -canvasHeight * 0.5 && canvasY < canvasHeight * 1.5) {
+                    if (firstPoint) { ctx.moveTo(canvasX, canvasY); firstPoint = false; } else { ctx.lineTo(canvasX, canvasY); }
+                } else { if (!firstPoint) { ctx.stroke(); } ctx.beginPath(); firstPoint = true; }
             }
             ctx.stroke();
         }
         
         function calculateYBounds(a, b, c, x_start, x_end) {
-            let y_vals = [];
-            const numSamples = 100; 
+            let y_vals = []; const numSamples = 100;
             for (let i = 0; i <= numSamples; i++) {
-                const x = x_start + (x_end - x_start) * (i / numSamples);
-                y_vals.push(a * x * x + b * x + c);
+                const x = x_start + (x_end - x_start) * (i / numSamples); y_vals.push(a * x * x + b * x + c);
             }
-            
-            if (a !== 0) { 
-                const vertexX = -b / (2 * a);
-                 if (vertexX >= x_start && vertexX <= x_end) { 
-                    y_vals.push(a * vertexX * vertexX + b * vertexX + c);
-                }
-            }
-            
-            let minY = Math.min(...y_vals);
-            let maxY = Math.max(...y_vals);
-
-            if (minY === maxY || !isFinite(minY) || !isFinite(maxY)) { 
-                minY = isFinite(minY) ? minY - 5 : -10; 
-                maxY = isFinite(maxY) ? maxY + 5 : 10;
-            }
-            
-            const paddingFactor = 0.15; 
-            const range = maxY - minY;
-            const padding = range === 0 ? 5 : range * paddingFactor; 
-
+            if (a !== 0) { const vertexX = -b / (2 * a); if (vertexX >= x_start && vertexX <= x_end) { y_vals.push(a * vertexX * vertexX + b * vertexX + c); } }
+            let minY = Math.min(...y_vals), maxY = Math.max(...y_vals);
+            if (minY === maxY || !isFinite(minY) || !isFinite(maxY)) { minY = isFinite(minY) ? minY - 5 : -10; maxY = isFinite(maxY) ? maxY + 5 : 10; }
+            const paddingFactor = 0.15, range = maxY - minY, padding = range === 0 ? 5 : range * paddingFactor;
             return { yMin: minY - padding, yMax: maxY + padding };
         }
+
+        // --- New: Draw Vertex Highlight for Curve 1 ---
+        function drawVertexHighlight(a, b, c, color) {
+            if (a === 0) return; // Not a parabola, no vertex in this context
+
+            const vx = -b / (2 * a);
+            const vy = a * vx * vx + b * vx + c;
+
+            const canvasVX = toCanvasX(vx);
+            const canvasVY = toCanvasY(vy);
+            const originXCanvas = toCanvasX(0);
+            const originYCanvas = toCanvasY(0);
+
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 2]); // Dotted line
+
+            // Line to Y-axis
+            ctx.moveTo(canvasVX, canvasVY);
+            ctx.lineTo(originXCanvas, canvasVY);
+            // Line to X-axis
+            ctx.moveTo(canvasVX, canvasVY);
+            ctx.lineTo(canvasVX, originYCanvas);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset line dash
+
+            // Draw vertex point
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(canvasVX, canvasVY, 4, 0, 2 * Math.PI); // Small circle for vertex
+            ctx.fill();
+
+            // Display vertex coordinates
+            ctx.fillStyle = color;
+            ctx.font = '11px Inter';
+            ctx.textAlign = (vx < (currentXMin + currentXMax) / 2) ? 'left' : 'right';
+            let textXOffset = (vx < (currentXMin + currentXMax) / 2) ? 8 : -8;
+            ctx.fillText(`V: (${vx.toFixed(2)}, ${vy.toFixed(2)})`, canvasVX + textXOffset, canvasVY - 8);
+            ctx.textAlign = 'left'; // Reset alignment
+        }
+
+        // --- New: Draw Explore Point on Curve 1 ---
+        function drawExplorePoint(x_explore, a, b, c, color) {
+            const y_explore = a * x_explore * x_explore + b * x_explore + c;
+            const canvasEX = toCanvasX(x_explore);
+            const canvasEY = toCanvasY(y_explore);
+
+            // Draw diamond marker
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(canvasEX, canvasEY - 5); // Top point
+            ctx.lineTo(canvasEX + 4, canvasEY); // Right point
+            ctx.lineTo(canvasEX, canvasEY + 5); // Bottom point
+            ctx.lineTo(canvasEX - 4, canvasEY); // Left point
+            ctx.closePath();
+            ctx.fill();
+
+            // Display coordinates
+            ctx.fillStyle = color;
+            ctx.font = '11px Inter';
+            let textXOffsetExplore = (x_explore < (currentXMin + currentXMax) / 2) ? 10 : -10;
+            ctx.textAlign = (x_explore < (currentXMin + currentXMax) / 2) ? 'left' : 'right';
+            ctx.fillText(`(${x_explore.toFixed(2)}, ${y_explore.toFixed(2)})`, canvasEX + textXOffsetExplore, canvasEY + 4);
+            ctx.textAlign = 'left'; // Reset alignment
+        }
+
 
         function drawAllCurves() {
             const isIntegerMode = integerIncrementsCheckbox.checked;
             const decimalPlaces = isIntegerMode ? 0 : 2;
             const stepValue = isIntegerMode ? "1" : "0.1";
 
-            [sliderA1, sliderB1, sliderC1, sliderA2, sliderB2, sliderC2].forEach(s => s.step = stepValue);
-
+            [sliderA1, sliderB1, sliderC1, sliderA2, sliderB2, sliderC2, sliderExploreX1].forEach(s => {
+                if (s) s.step = stepValue; // sliderExploreX1 might not exist if we remove it later
+            });
+            
             const a1 = parseFloat(sliderA1.value);
             const b1 = parseFloat(sliderB1.value);
             const c1 = parseFloat(sliderC1.value);
@@ -453,79 +474,65 @@
             valueB1.textContent = b1.toFixed(decimalPlaces);
             valueC1.textContent = c1.toFixed(decimalPlaces);
             equationDisplay1.textContent = `y = ${a1.toFixed(2)}x² ${b1 < 0 ? '-' : '+'} ${Math.abs(b1).toFixed(2)}x ${c1 < 0 ? '-' : '+'} ${Math.abs(c1).toFixed(2)}`;
+            
+            // Update Explore X slider range and value display
+            sliderExploreX1.min = currentXMin.toFixed(2);
+            sliderExploreX1.max = currentXMax.toFixed(2);
+            sliderExploreX1.step = ((currentXMax - currentXMin) / 100).toFixed(3); // Dynamic step for explore slider
+            const xExploreVal = parseFloat(sliderExploreX1.value);
+            valueExploreX1.textContent = xExploreVal.toFixed(decimalPlaces);
+
 
             if (autoZoomToggleCheckbox.checked) {
                 zoomLevelContainer.classList.remove('hidden');
                 const zoom = parseFloat(zoomLevelSlider.value);
                 zoomLevelValue.textContent = zoom.toFixed(0);
                 let vertexX, viewCenterX;
-
-                if (a1 !== 0) { 
-                    vertexX = -b1 / (2 * a1);
-                } else { 
-                    vertexX = 0; 
-                }
+                if (a1 !== 0) { vertexX = -b1 / (2 * a1); } else { vertexX = 0; }
                 viewCenterX = vertexX;
-                
-                currentXMin = viewCenterX - zoom / 2;
-                currentXMax = viewCenterX + zoom / 2;
-
+                currentXMin = viewCenterX - zoom / 2; currentXMax = viewCenterX + zoom / 2;
                 let yBounds1 = calculateYBounds(a1, b1, c1, currentXMin, currentXMax);
-                currentYMin = yBounds1.yMin;
-                currentYMax = yBounds1.yMax;
-
+                currentYMin = yBounds1.yMin; currentYMax = yBounds1.yMax;
                 if (toggleCurve2Checkbox.checked) {
-                    const a2_temp = parseFloat(sliderA2.value);
-                    const b2_temp = parseFloat(sliderB2.value);
-                    const c2_temp = parseFloat(sliderC2.value);
+                    const a2_temp = parseFloat(sliderA2.value), b2_temp = parseFloat(sliderB2.value), c2_temp = parseFloat(sliderC2.value);
                     const yBounds2 = calculateYBounds(a2_temp, b2_temp, c2_temp, currentXMin, currentXMax);
-                    currentYMin = Math.min(currentYMin, yBounds2.yMin);
-                    currentYMax = Math.max(currentYMax, yBounds2.yMax);
+                    currentYMin = Math.min(currentYMin, yBounds2.yMin); currentYMax = Math.max(currentYMax, yBounds2.yMax);
                 }
             } else {
                 zoomLevelContainer.classList.add('hidden');
-                currentXMin = xMinDefault;
-                currentXMax = xMaxDefault;
-                currentYMin = yMinDefault;
-                currentYMax = yMaxDefault;
+                currentXMin = xMinDefault; currentXMax = xMaxDefault;
+                currentYMin = yMinDefault; currentYMax = yMaxDefault;
             }
 
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
             drawAxes();
             plotSingleCurve(a1, b1, c1, '#3b82f6'); 
+            drawVertexHighlight(a1, b1, c1, '#059669'); // Draw vertex for curve 1 (e.g. green)
+            drawExplorePoint(xExploreVal, a1, b1, c1, '#db2777'); // Draw explore point for curve 1 (e.g. pink)
+
 
             if (toggleCurve2Checkbox.checked) {
                 curve2ControlsContainer.classList.remove('hidden');
-                sliderA2.disabled = false;
-                sliderB2.disabled = false;
-                sliderC2.disabled = false;
-
-                const a2 = parseFloat(sliderA2.value);
-                const b2 = parseFloat(sliderB2.value);
-                const c2 = parseFloat(sliderC2.value);
-                valueA2.textContent = a2.toFixed(decimalPlaces);
-                valueB2.textContent = b2.toFixed(decimalPlaces);
-                valueC2.textContent = c2.toFixed(decimalPlaces);
+                sliderA2.disabled = false; sliderB2.disabled = false; sliderC2.disabled = false;
+                const a2 = parseFloat(sliderA2.value), b2 = parseFloat(sliderB2.value), c2 = parseFloat(sliderC2.value);
+                valueA2.textContent = a2.toFixed(decimalPlaces); valueB2.textContent = b2.toFixed(decimalPlaces); valueC2.textContent = c2.toFixed(decimalPlaces);
                 equationDisplay2.textContent = `y = ${a2.toFixed(2)}x² ${b2 < 0 ? '-' : '+'} ${Math.abs(b2).toFixed(2)}x ${c2 < 0 ? '-' : '+'} ${Math.abs(c2).toFixed(2)}`;
                 plotSingleCurve(a2, b2, c2, '#ef4444'); 
             } else {
                 curve2ControlsContainer.classList.add('hidden');
-                sliderA2.disabled = true;
-                sliderB2.disabled = true;
-                sliderC2.disabled = true;
+                sliderA2.disabled = true; sliderB2.disabled = true; sliderC2.disabled = true;
             }
         }
 
-        // --- Gemini API Call Functions ---
         async function callGeminiAPI(prompt, loadingElement, explanationElement, buttonElement) {
             buttonElement.disabled = true;
             loadingElement.classList.remove('hidden');
             explanationElement.classList.add('hidden');
-            explanationElement.textContent = '';
+            explanationElement.innerHTML = ''; // Use innerHTML for Markdown
 
             const userApiKey = apiKeyInput.value.trim();
             if (!userApiKey) {
-                explanationElement.textContent = "Please enter your Gemini API Key in the Global Settings.";
+                explanationElement.innerHTML = "<p>Please enter your Gemini API Key in the Global Settings.</p>";
                 explanationElement.classList.remove('hidden');
                 buttonElement.disabled = false;
                 loadingElement.classList.add('hidden');
@@ -534,7 +541,6 @@
 
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { contents: chatHistory };
-            // Use the API key from the input field
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${userApiKey}`; 
 
             try {
@@ -543,27 +549,26 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
                 if (!response.ok) {
                     const errorData = await response.json();
-                    console.error("Gemini API Error:", errorData);
                     throw new Error(`API request failed with status ${response.status}: ${errorData?.error?.message || response.statusText}`);
                 }
-
                 const result = await response.json();
-                
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    explanationElement.textContent = text;
+                    const rawText = result.candidates[0].content.parts[0].text;
+                    // Render Markdown then typeset MathJax
+                    explanationElement.innerHTML = marked.parse(rawText); // Use marked.parse()
+                    if (window.MathJax) {
+                        MathJax.typesetPromise([explanationElement]).catch((err) => console.error('MathJax typesetting error:', err));
+                    }
                 } else {
-                    console.error("Unexpected Gemini API response structure:", result);
-                    explanationElement.textContent = "Could not retrieve an explanation. The response structure was unexpected.";
+                    explanationElement.innerHTML = "<p>Could not retrieve an explanation. The response structure was unexpected.</p>";
                 }
             } catch (error) {
                 console.error('Error fetching explanation from Gemini:', error);
-                explanationElement.textContent = `Error: ${error.message}. Check if your API key is correct and has permissions.`;
+                explanationElement.innerHTML = `<p>Error: ${error.message}. Check if your API key is correct and has permissions.</p>`;
             } finally {
                 buttonElement.disabled = false;
                 loadingElement.classList.add('hidden');
@@ -582,52 +587,44 @@ Keep the explanation concise, clear, and suitable for a student learning about q
 
         function getGeminiRootsExplanation(a, b, c) {
             if (a === 0) { 
-                 geminiRootsExplanation.textContent = "This is a linear equation (since a=0), not a quadratic. A linear equation y = bx + c (where b is not 0) crosses the x-axis at x = -c/b. If b=0 and c=0, it's the line y=0 (the x-axis). If b=0 and c is not 0, it's a horizontal line y=c that doesn't cross the x-axis unless c=0.";
+                 geminiRootsExplanation.innerHTML = marked.parse("This is a linear equation (since a=0), not a quadratic. \nA linear equation $y = bx + c$ (where $b \\neq 0$) crosses the x-axis at $x = -c/b$. \nIf $b=0$ and $c=0$, it's the line $y=0$ (the x-axis). \nIf $b=0$ and $c \\neq 0$, it's a horizontal line $y=c$ that doesn't cross the x-axis unless $c=0$.");
+                 if (window.MathJax) { MathJax.typesetPromise([geminiRootsExplanation]).catch(err => console.error(err));}
                  geminiRootsExplanation.classList.remove('hidden');
                  return;
             }
-            const prompt = `For the quadratic equation y = ${a}x^2 + ${b}x + ${c}:
-1. Briefly state the quadratic formula.
-2. Calculate the discriminant (b^2 - 4ac) and show its value.
-3. Based on the discriminant, describe the nature of the roots (e.g., two distinct real roots, one real repeated root, two complex conjugate roots).
-4. Calculate the roots. If they are complex, express them in the form x ± yi. Show the calculation steps if possible.
+            const prompt = `For the quadratic equation $y = ${a}x^2 + ${b}x + ${c}$:
+1. Briefly state the quadratic formula: $x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$.
+2. Calculate the discriminant ($D = b^2 - 4ac$) and state its value.
+3. Based on the discriminant, describe the nature of the roots (e.g., two distinct real roots if $D > 0$, one real repeated root if $D = 0$, two complex conjugate roots if $D < 0$).
+4. Calculate the roots. If they are real, provide their values. If they are complex, express them in the form $x \\pm yi$. Show the main calculation steps.
 5. Briefly explain what these roots represent graphically (i.e., where the curve intersects the x-axis).
-Keep the explanation clear and educational. Use $ for LaTeX for formulas like $x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$ .`;
+Keep the explanation clear and educational. Ensure all mathematical formulas and variables are enclosed in $...$ for LaTeX rendering.`;
             callGeminiAPI(prompt, geminiRootsExplanationLoading, geminiRootsExplanation, explainRootsButton);
         }
 
         // Event Listeners
-        [sliderA1, sliderB1, sliderC1, sliderA2, sliderB2, sliderC2].forEach(slider => {
-            slider.addEventListener('input', drawAllCurves);
+        [sliderA1, sliderB1, sliderC1, sliderA2, sliderB2, sliderC2, sliderExploreX1].forEach(slider => {
+            if(slider) slider.addEventListener('input', drawAllCurves);
         });
 
         toggleCurve2Checkbox.addEventListener('change', drawAllCurves);
         integerIncrementsCheckbox.addEventListener('change', drawAllCurves);
         autoZoomToggleCheckbox.addEventListener('change', drawAllCurves);
-        zoomLevelSlider.addEventListener('input', () => {
-            if (autoZoomToggleCheckbox.checked) drawAllCurves();
-        });
+        zoomLevelSlider.addEventListener('input', () => { if (autoZoomToggleCheckbox.checked) drawAllCurves(); });
         
         explainCurve1Button.addEventListener('click', () => {
-            const a1 = parseFloat(sliderA1.value);
-            const b1 = parseFloat(sliderB1.value);
-            const c1 = parseFloat(sliderC1.value);
+            const a1 = parseFloat(sliderA1.value), b1 = parseFloat(sliderB1.value), c1 = parseFloat(sliderC1.value);
             getGeminiCurveExplanation(a1, b1, c1);
         });
-
         explainRootsButton.addEventListener('click', () => {
-            const a1 = parseFloat(sliderA1.value);
-            const b1 = parseFloat(sliderB1.value);
-            const c1 = parseFloat(sliderC1.value);
+            const a1 = parseFloat(sliderA1.value), b1 = parseFloat(sliderB1.value), c1 = parseFloat(sliderC1.value);
             getGeminiRootsExplanation(a1, b1, c1);
         });
         
         window.addEventListener('resize', resizeCanvas);
-
         // Initial setup
         resizeCanvas(); 
         drawAllCurves(); 
-
     </script>
 </body>
 </html>
