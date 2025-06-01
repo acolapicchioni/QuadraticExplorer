@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Master Completing the Square!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Inter font will be loaded by Tailwind */
+      body {
+        font-family: "Inter", sans-serif;
+        line-height: 1.7; /* Increased line-height for better readability */
+        background-color: #f0f4f8; /* Light blue-gray background */
+        color: #1a202c; /* Darker text for better contrast */
+      }
+      .container {
+        max-width: 800px;
+        margin: 2rem auto; /* Using rem for responsive margin */
+        padding: 2rem; /* Using rem for responsive padding */
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0; /* Softer border color */
+        border-radius: 0.75rem; /* More rounded corners */
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Softer shadow */
+      }
+      h1,
+      h2,
+      h3 {
+        color: #2c5282; /* A deep blue for headings */
+        font-weight: 700; /* Bolder headings */
+        margin-top: 1.5em;
+        margin-bottom: 0.75em;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2.25rem; /* Larger H1 */
+        color: #2a4365; /* Slightly different blue for main title */
+      }
+      h2 {
+        font-size: 1.75rem; /* Larger H2 */
+        border-bottom: 2px solid #cbd5e0; /* Underline for H2 */
+        padding-bottom: 0.3em;
+      }
+      h3 {
+        font-size: 1.35rem; /* Larger H3 */
+      }
+      .step {
+        margin-bottom: 2.5rem; /* Increased margin for steps */
+        padding: 1.5rem;
+        border-left: 5px solid #4299e1; /* Brighter blue for step accent */
+        background-color: #ebf8ff; /* Very light blue for step background */
+        border-radius: 0.5rem;
+      }
+      .example {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #e2e8f0; /* Slightly darker for example background */
+        border-radius: 0.5rem;
+        border: 1px dashed #a0aec0; /* Dashed border for examples */
+      }
+      .example strong {
+        color: #2d3748; /* Darker text for "Example:" */
+      }
+      .recap {
+        margin-top: 2.5rem;
+        padding: 1.5rem;
+        background-color: #fffaf0; /* Light orange/yellow for recap */
+        border: 1px solid #fed7a7; /* Orange border for recap */
+        border-radius: 0.5rem;
+      }
+      .recap h3 {
+        color: #c05621; /* Dark orange for recap title */
+      }
+      strong {
+        color: #4a5568; /* Slightly darker gray for strong text */
+      }
+      code,
+      .math-formula {
+        background-color: #edf2f7; /* Light gray for code/formula background */
+        padding: 0.2em 0.4em;
+        border-radius: 0.25rem;
+        font-family: "Courier New", Courier, monospace; /* Monospace for code/formulas */
+        color: #2d3748; /* Dark text for code */
+        font-size: 0.95em;
+      }
+      ol,
+      ul {
+        padding-left: 2rem; /* Indent lists */
+      }
+      li {
+        margin-bottom: 0.5rem; /* Space between list items */
+      }
+      hr {
+        border-top: 1px solid #cbd5e0;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+      /* MathJax/LaTeX like styling for formulas (conceptual) */
+      .math-formula sup,
+      .math-formula sub {
+        font-size: 0.75em;
+        vertical-align: super;
+      }
+      .math-formula sub {
+        vertical-align: sub;
+      }
+      .math-symbol {
+        font-style: italic;
+        color: #5a67d8; /* Indigo for symbols */
+      }
+      .fraction {
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .fraction .numerator {
+        display: block;
+        border-bottom: 1px solid;
+        padding: 0 0.2em;
+      }
+      .fraction .denominator {
+        display: block;
+        padding: 0 0.2em;
+      }
+      .sqrt-symbol {
+        font-size: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="w-full max-w-4xl mx-auto px-4 py-2">
+      <a
+        href="./index.html"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        &larr; Back to Index
+      </a>
+    </div>
+    <div class="container">
+      <h1>🧙‍♂️ Master Completing the Square! 🧙‍♂️</h1>
+      <p class="text-center text-lg text-gray-700">
+        <strong
+          >Your Easy Guide to Solving Quadratic Equations (<span
+            class="math-formula"
+            ><span class="math-symbol">ax</span><sup>2</sup> +
+            <span class="math-symbol">bx</span> +
+            <span class="math-symbol">c</span> = 0</span
+          >)</strong
+        >
+      </p>
+      <p class="mt-4 text-gray-800">
+        Hey Peter! Got a tricky quadratic equation? No problem! Let's learn how
+        to solve it using a cool method called "Completing the Square." Follow
+        these simple steps:
+      </p>
+
+      <hr />
+
+      <div class="step">
+        <h2>Step 1: Get Ready! Set Up Your Equation ⚙️</h2>
+        <p>
+          The goal here is to get your equation into the form:
+          <code class="math-formula"
+            ><span class="math-symbol">x</span><sup>2</sup> +
+            <span class="math-symbol">bx</span> =
+            <span class="math-symbol">c</span></code
+          >.
+        </p>
+        <ol>
+          <li>
+            <strong
+              >Isolate <span class="math-symbol">x</span><sup>2</sup> and
+              <span class="math-symbol">x</span> terms</strong
+            >: If your equation is
+            <code class="math-formula"
+              ><span class="math-symbol">ax</span><sup>2</sup> +
+              <span class="math-symbol">bx</span> +
+              <span class="math-symbol">c</span> = 0</code
+            >, move the constant term (<span class="math-symbol">c</span>) to
+            the right side:<br />
+            <code class="math-formula"
+              ><span class="math-symbol">ax</span><sup>2</sup> +
+              <span class="math-symbol">bx</span> = -<span class="math-symbol"
+                >c</span
+              ></code
+            >
+          </li>
+          <li>
+            <strong>Leading Coefficient Check</strong>: If there's a number in
+            front of <span class="math-symbol">x</span><sup>2</sup> (the '<span
+              class="math-symbol"
+              >a</span
+            >' value) and it's not 1, divide <em>every single term</em> in the
+            equation by '<span class="math-symbol">a</span>'.<br />
+            <code class="math-formula">
+              <span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">ax</span><sup>2</sup></span
+                ><span class="denominator"
+                  ><span class="math-symbol">a</span></span
+                ></span
+              >
+              +
+              <span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">bx</span></span
+                ><span class="denominator"
+                  ><span class="math-symbol">a</span></span
+                ></span
+              >
+              =
+              <span class="fraction"
+                ><span class="numerator"
+                  >-<span class="math-symbol">c</span></span
+                ><span class="denominator"
+                  ><span class="math-symbol">a</span></span
+                ></span
+              > </code
+            ><br />
+            This simplifies to:
+            <code class="math-formula"
+              ><span class="math-symbol">x</span><sup>2</sup> + (<span
+                class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator"
+                  ><span class="math-symbol">a</span></span
+                ></span
+              >)<span class="math-symbol">x</span> = -<span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">c</span></span
+                ><span class="denominator"
+                  ><span class="math-symbol">a</span></span
+                ></span
+              ></code
+            >
+          </li>
+        </ol>
+        <div class="example">
+          <strong>Example:</strong> Let's solve
+          <code class="math-formula"
+            >2<span class="math-symbol">x</span><sup>2</sup> + 12<span
+              class="math-symbol"
+              >x</span
+            >
+            - 14 = 0</code
+          >
+          <ol>
+            <li>
+              Move constant:
+              <code class="math-formula"
+                >2<span class="math-symbol">x</span><sup>2</sup> + 12<span
+                  class="math-symbol"
+                  >x</span
+                >
+                = 14</code
+              >
+            </li>
+            <li>
+              '<span class="math-symbol">a</span>' is 2, so divide everything by
+              2:<br />
+              <code class="math-formula">
+                <span class="fraction"
+                  ><span class="numerator"
+                    >2<span class="math-symbol">x</span><sup>2</sup></span
+                  ><span class="denominator">2</span></span
+                >
+                +
+                <span class="fraction"
+                  ><span class="numerator"
+                    >12<span class="math-symbol">x</span></span
+                  ><span class="denominator">2</span></span
+                >
+                =
+                <span class="fraction"
+                  ><span class="numerator">14</span
+                  ><span class="denominator">2</span></span
+                > </code
+              ><br />
+              Which gives us:
+              <code class="math-formula"
+                ><span class="math-symbol">x</span><sup>2</sup> + 6<span
+                  class="math-symbol"
+                  >x</span
+                >
+                = 7</code
+              ><br />
+              <em class="text-sm text-gray-600"
+                >(Now our equation is in the
+                <code class="math-formula"
+                  ><span class="math-symbol">x</span><sup>2</sup> +
+                  <span class="math-symbol">bx</span> =
+                  <span class="math-symbol">c</span></code
+                >
+                form, where <span class="math-symbol">b</span>=6 and
+                <span class="math-symbol">c</span>=7)</em
+              >
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="step">
+        <h2>Step 2: Find the Magic Ingredient! ✨</h2>
+        <p>This special number will help us "complete the square."</p>
+        <ol>
+          <li>
+            <strong>Identify '<span class="math-symbol">b</span>'</strong>: Look
+            at the coefficient of your <span class="math-symbol">x</span> term
+            (the number next to <span class="math-symbol">x</span>). In
+            <code class="math-formula"
+              ><span class="math-symbol">x</span><sup>2</sup> +
+              <strong><span class="math-symbol">b</span></strong
+              ><span class="math-symbol">x</span> =
+              <span class="math-symbol">c</span></code
+            >, this is '<span class="math-symbol">b</span>'.
+          </li>
+          <li>
+            <strong>Halve it</strong>: Calculate
+            <code class="math-formula"
+              >(<span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              >)</code
+            >.
+          </li>
+          <li>
+            <strong>Square it</strong>: Calculate
+            <code class="math-formula"
+              >(<span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              >)<sup>2</sup></code
+            >. This is your magic ingredient!
+          </li>
+        </ol>
+        <div class="example">
+          <strong
+            >Example (Continuing with
+            <code class="math-formula"
+              ><span class="math-symbol">x</span><sup>2</sup> + 6<span
+                class="math-symbol"
+                >x</span
+              >
+              = 7</code
+            >):</strong
+          >
+          <ol>
+            <li>Our '<span class="math-symbol">b</span>' is 6.</li>
+            <li>
+              Halve it:
+              <code class="math-formula"
+                >(<span class="fraction"
+                  ><span class="numerator">6</span
+                  ><span class="denominator">2</span></span
+                >) = 3</code
+              >.
+            </li>
+            <li>
+              Square it: <code class="math-formula">(3)<sup>2</sup> = 9</code>.
+            </li>
+          </ol>
+          <p>
+            <em class="text-sm text-gray-600">Our magic ingredient is 9!</em>
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <h2>Step 3: Add the Magic! 🪄➕</h2>
+        <p>
+          Add the magic ingredient you just found to <em>both sides</em> of your
+          equation. This keeps the equation balanced!
+        </p>
+        <p>
+          <code class="math-formula"
+            ><span class="math-symbol">x</span><sup>2</sup> +
+            <span class="math-symbol">bx</span> + (<span class="fraction"
+              ><span class="numerator"><span class="math-symbol">b</span></span
+              ><span class="denominator">2</span></span
+            >)<sup>2</sup> = <span class="math-symbol">c</span> + (<span
+              class="fraction"
+              ><span class="numerator"><span class="math-symbol">b</span></span
+              ><span class="denominator">2</span></span
+            >)<sup>2</sup></code
+          >
+        </p>
+        <div class="example">
+          <strong>Example (Continuing):</strong>
+          <p>
+            Add 9 to both sides of
+            <code class="math-formula"
+              ><span class="math-symbol">x</span><sup>2</sup> + 6<span
+                class="math-symbol"
+                >x</span
+              >
+              = 7</code
+            >:<br />
+            <code class="math-formula"
+              ><span class="math-symbol">x</span><sup>2</sup> + 6<span
+                class="math-symbol"
+                >x</span
+              >
+              + 9 = 7 + 9</code
+            ><br />
+            <code class="math-formula"
+              ><span class="math-symbol">x</span><sup>2</sup> + 6<span
+                class="math-symbol"
+                >x</span
+              >
+              + 9 = 16</code
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <h2>Step 4: Factor Power! 🦸‍♂️</h2>
+        <p>
+          The left side of your equation is now a "perfect square trinomial."
+          This means it can be factored neatly.
+        </p>
+        <p>
+          It will <em>always</em> factor into the form:
+          <code class="math-formula"
+            >(<span class="math-symbol">x</span> +
+            <span class="fraction"
+              ><span class="numerator"><span class="math-symbol">b</span></span
+              ><span class="denominator">2</span></span
+            >)<sup>2</sup></code
+          ><br />
+          <em class="text-sm text-gray-600"
+            >(Notice that
+            <code class="math-formula"
+              ><span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              ></code
+            >
+            is the number you got in Step 2 before squaring it!)</em
+          >
+        </p>
+        <div class="example">
+          <strong>Example (Continuing):</strong>
+          <p>
+            Factor
+            <code class="math-formula"
+              ><span class="math-symbol">x</span><sup>2</sup> + 6<span
+                class="math-symbol"
+                >x</span
+              >
+              + 9</code
+            >:<br />
+            Since our
+            <code class="math-formula"
+              ><span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              ></code
+            >
+            was 3, this factors to
+            <code class="math-formula"
+              >(<span class="math-symbol">x</span> + 3)<sup>2</sup></code
+            >.<br />
+            So, our equation becomes:
+            <code class="math-formula"
+              >(<span class="math-symbol">x</span> + 3)<sup>2</sup> = 16</code
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <h2>
+          Step 5: Almost There! Solve for <span class="math-symbol">x</span> 🏁
+        </h2>
+        <p>Now, we isolate <span class="math-symbol">x</span>.</p>
+        <ol>
+          <li>
+            <strong>Square Root Both Sides</strong>: Take the square root of
+            both sides of the equation. Don't forget the
+            <code class="math-symbol">&plusmn;</code> (plus or minus) on the
+            right side, because both positive and negative numbers give a
+            positive result when squared!<br />
+            <code class="math-formula"
+              ><span class="sqrt-symbol">&radic;</span>(<span
+                class="math-symbol"
+                >x</span
+              >
+              +
+              <span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              >)<sup>2</sup> = &plusmn;<span class="sqrt-symbol">&radic;</span
+              >(right side)</code
+            ><br />
+            <code class="math-formula"
+              ><span class="math-symbol">x</span> +
+              <span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              >
+              = &plusmn;<span class="sqrt-symbol">&radic;</span>(right
+              side)</code
+            >
+          </li>
+          <li>
+            <strong>Isolate <span class="math-symbol">x</span></strong
+            >: Subtract the
+            <code class="math-formula"
+              ><span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              ></code
+            >
+            term from both sides to get <span class="math-symbol">x</span> by
+            itself.<br />
+            <code class="math-formula"
+              ><span class="math-symbol">x</span> = -<span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              >
+              &plusmn;<span class="sqrt-symbol">&radic;</span>(right side)</code
+            >
+          </li>
+        </ol>
+        <div class="example">
+          <strong>Example (Continuing):</strong>
+          <p>
+            Equation:
+            <code class="math-formula"
+              >(<span class="math-symbol">x</span> + 3)<sup>2</sup> = 16</code
+            >
+          </p>
+          <ol>
+            <li>
+              Square root both sides:<br />
+              <code class="math-formula"
+                ><span class="sqrt-symbol">&radic;</span>(<span
+                  class="math-symbol"
+                  >x</span
+                >
+                + 3)<sup>2</sup> = &plusmn;<span class="sqrt-symbol"
+                  >&radic;</span
+                >16</code
+              ><br />
+              <code class="math-formula"
+                ><span class="math-symbol">x</span> + 3 = &plusmn;4</code
+              >
+            </li>
+            <li>
+              Isolate <span class="math-symbol">x</span> (subtract 3 from both
+              sides):<br />
+              <code class="math-formula"
+                ><span class="math-symbol">x</span> = -3 &plusmn;4</code
+              >
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="step">
+        <h2>Step 6: The Solutions! Your Answers Revealed 🏆</h2>
+        <p>
+          You're at the final step! Calculate the two possible values for
+          <span class="math-symbol">x</span> using the
+          <code class="math-symbol">&plusmn;</code>.
+        </p>
+        <ol>
+          <li><strong>Solution 1</strong>: Use the '+' sign.</li>
+          <li><strong>Solution 2</strong>: Use the '-' sign.</li>
+        </ol>
+        <div class="example">
+          <strong
+            >Example (Continuing with
+            <code class="math-formula"
+              ><span class="math-symbol">x</span> = -3 &plusmn;4</code
+            >):</strong
+          >
+          <ol>
+            <li>
+              Solution 1 (with +):<br />
+              <code class="math-formula"
+                ><span class="math-symbol">x</span><sub>1</sub> = -3 + 4</code
+              ><br />
+              <code class="math-formula"
+                ><span class="math-symbol">x</span><sub>1</sub> = 1</code
+              >
+            </li>
+            <li>
+              Solution 2 (with -):<br />
+              <code class="math-formula"
+                ><span class="math-symbol">x</span><sub>2</sub> = -3 - 4</code
+              ><br />
+              <code class="math-formula"
+                ><span class="math-symbol">x</span><sub>2</sub> = -7</code
+              >
+            </li>
+          </ol>
+          <p class="mt-2">
+            <strong
+              >So, the solutions to
+              <code class="math-formula"
+                >2<span class="math-symbol">x</span><sup>2</sup> + 12<span
+                  class="math-symbol"
+                  >x</span
+                >
+                - 14 = 0</code
+              >
+              are
+              <code class="math-formula"
+                ><span class="math-symbol">x</span> = 1</code
+              >
+              and
+              <code class="math-formula"
+                ><span class="math-symbol">x</span> = -7</code
+              >. You did it!</strong
+            >
+            🎉
+          </p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="recap">
+        <h3>Quick Recap! 📝</h3>
+        <ol>
+          <li>
+            <strong
+              >Form
+              <code class="math-formula"
+                ><span class="math-symbol">x</span><sup>2</sup> +
+                <span class="math-symbol">bx</span> =
+                <span class="math-symbol">c</span></code
+              ></strong
+            >: Adjust the equation.
+          </li>
+          <li>
+            <strong>Magic Ingredient</strong>: Find and add
+            <code class="math-formula"
+              >(<span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              >)<sup>2</sup></code
+            >
+            to both sides.
+          </li>
+          <li>
+            <strong>Factor</strong>: Rewrite the left side as
+            <code class="math-formula"
+              >(<span class="math-symbol">x</span> +
+              <span class="fraction"
+                ><span class="numerator"
+                  ><span class="math-symbol">b</span></span
+                ><span class="denominator">2</span></span
+              >)<sup>2</sup></code
+            >.
+          </li>
+          <li>
+            <strong>Square Root</strong>: Take
+            <code class="math-symbol"
+              >&plusmn;<span class="sqrt-symbol">&radic;</span></code
+            >
+            of both sides.
+          </li>
+          <li>
+            <strong>Isolate <span class="math-symbol">x</span></strong
+            >: Get <span class="math-symbol">x</span> alone.
+          </li>
+          <li><strong>Two Solutions</strong>: Calculate your two answers!</li>
+        </ol>
+      </div>
+    </div>
+    <!-- 
+        Comments:
+        - This HTML structure provides a step-by-step guide to solving quadratic equations by completing the square.
+        - It includes examples for each step to clarify the process.
+        - Basic styling is applied using Tailwind CSS and some inline/embedded CSS for better readability and presentation.
+        - The use of `<code>` and custom classes like `math-formula` is for semantic representation of mathematical expressions.
+        - The layout is responsive due to Tailwind CSS and viewport meta tag.
+        - Emojis are used to make the content more engaging for a student.
+        - The color scheme and typography are chosen for clarity and visual appeal.
+        - Note: The fraction and square root styling is a simplified visual representation using CSS and HTML, not actual LaTeX rendering. For true mathematical typesetting, a library like MathJax would be needed, but that adds complexity not suitable for a basic HTML infographic.
+    -->
+  </body>
+</html>
