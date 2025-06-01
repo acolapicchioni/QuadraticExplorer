@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfect Square Trinomial Practice Zone! 🎯</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Inter font will be loaded by Tailwind */
+      body {
+        font-family: "Inter", sans-serif;
+        line-height: 1.7;
+        background-color: #f3f4f6; /* Light gray background */
+        color: #1f2937; /* Darker gray text */
+      }
+      .container {
+        max-width: 850px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      h1,
+      h2,
+      h3 {
+        color: #1e40af; /* A strong blue for headings */
+        font-weight: 700;
+        margin-top: 1.5em;
+        margin-bottom: 0.75em;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2.25rem;
+        color: #1c3d5a;
+      }
+      h2 {
+        font-size: 1.75rem;
+        border-bottom: 2px solid #9ca3af;
+        padding-bottom: 0.3em;
+      }
+      .section {
+        margin-bottom: 2.5rem;
+        padding: 1.5rem;
+        background-color: #eef2ff; /* Light indigo background for sections */
+        border-radius: 0.5rem;
+        border-left: 5px solid #4338ca; /* Indigo accent */
+      }
+      .question-block {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: #fff;
+        border-radius: 0.375rem;
+        border: 1px solid #e5e7eb;
+      }
+      .math-formula {
+        background-color: #e5e7eb;
+        padding: 0.2em 0.4em;
+        border-radius: 0.25rem;
+        font-family: "Courier New", Courier, monospace;
+        color: #111827;
+        font-size: 1em;
+        display: inline-block;
+      }
+      .input-field {
+        border: 1px solid #9ca3af;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        margin-right: 0.5rem;
+        width: 100px; /* Adjust as needed */
+      }
+      .feedback {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+      }
+      .feedback.correct {
+        background-color: #d1fae5; /* Green for correct */
+        color: #065f46;
+        border: 1px solid #6ee7b7;
+      }
+      .feedback.incorrect {
+        background-color: #fee2e2; /* Red for incorrect */
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+      }
+      .submit-btn {
+        background-color: #2563eb; /* Blue button */
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .submit-btn:hover {
+        background-color: #1d4ed8; /* Darker blue on hover */
+      }
+      .explanation {
+        background-color: #f0f9ff; /* Light sky blue for explanations */
+        padding: 1rem;
+        border-radius: 0.375rem;
+        margin-bottom: 1rem;
+        border: 1px solid #bae6fd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="w-full max-w-4xl mx-auto px-4 py-2">
+      <a
+        href="./index.html"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        &larr; Back to Index
+      </a>
+    </div>
+    <div class="container">
+      <h1>Perfect Square Trinomial Practice Zone! 🎯</h1>
+      <p class="text-center text-lg text-gray-700">
+        Let's become a pro at spotting and factoring perfect square trinomials!
+      </p>
+
+      <div class="explanation">
+        <h3>What's a Perfect Square Trinomial?</h3>
+        <p>
+          A perfect square trinomial is a trinomial (an expression with three
+          terms) that results from squaring a binomial (an expression with two
+          terms).
+        </p>
+        <p>It has two main forms:</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>
+            <span class="math-formula"
+              >(a + b)<sup>2</sup> = a<sup>2</sup> + 2ab + b<sup>2</sup></span
+            >
+          </li>
+          <li>
+            <span class="math-formula"
+              >(a - b)<sup>2</sup> = a<sup>2</sup> - 2ab + b<sup>2</sup></span
+            >
+          </li>
+        </ul>
+        <p><strong>Key things to look for:</strong></p>
+        <ul class="list-disc list-inside ml-4">
+          <li>
+            The first term (<span class="math-formula">a<sup>2</sup></span
+            >) is a perfect square.
+          </li>
+          <li>
+            The last term (<span class="math-formula">b<sup>2</sup></span
+            >) is a perfect square.
+          </li>
+          <li>
+            The middle term (<span class="math-formula">2ab</span> or
+            <span class="math-formula">-2ab</span>) is twice the product of the
+            square roots of the first and last terms.
+          </li>
+        </ul>
+      </div>
+
+      <hr class="my-8" />
+
+      <div class="section">
+        <h2>Section 1: Is it a Perfect Square Trinomial? 🤔</h2>
+        <p>
+          For each trinomial below, decide if it's a perfect square trinomial.
+        </p>
+
+        <div class="question-block" id="q1_1">
+          <p>
+            1. <span class="math-formula">x<sup>2</sup> + 6x + 9</span>
+          </p>
+          <button
+            onclick="checkPST('q1_1', true, 'x+3')"
+            class="submit-btn mr-2"
+          >
+            Yes
+          </button>
+          <button
+            onclick="provideFeedback('q1_1_feedback', 'Incorrect. Think: Is the first term a square? Is the last term a square? Is the middle term 2 * sqrt(first) * sqrt(last)?', false)"
+            class="submit-btn bg-red-600 hover:bg-red-700"
+          >
+            No
+          </button>
+          <div id="q1_1_feedback" class="feedback" style="display: none"></div>
+        </div>
+
+        <div class="question-block" id="q1_2">
+          <p>
+            2. <span class="math-formula">x<sup>2</sup> - 10x + 25</span>
+          </p>
+          <button
+            onclick="checkPST('q1_2', true, 'x-5')"
+            class="submit-btn mr-2"
+          >
+            Yes
+          </button>
+          <button
+            onclick="provideFeedback('q1_2_feedback', 'Incorrect. Check the signs and the middle term carefully!', false)"
+            class="submit-btn bg-red-600 hover:bg-red-700"
+          >
+            No
+          </button>
+          <div id="q1_2_feedback" class="feedback" style="display: none"></div>
+        </div>
+
+        <div class="question-block" id="q1_3">
+          <p>
+            3. <span class="math-formula">x<sup>2</sup> + 4x + 8</span>
+          </p>
+          <button
+            onclick="provideFeedback('q1_3_feedback', 'Incorrect. While x² is a square, is 8 a perfect square? Also check the middle term.', false)"
+            class="submit-btn mr-2"
+          >
+            Yes
+          </button>
+          <button
+            onclick="checkPST('q1_3', false, null)"
+            class="submit-btn bg-red-600 hover:bg-red-700"
+          >
+            No
+          </button>
+          <div id="q1_3_feedback" class="feedback" style="display: none"></div>
+        </div>
+
+        <div class="question-block" id="q1_4">
+          <p>
+            4. <span class="math-formula">4y<sup>2</sup> - 12y + 9</span>
+          </p>
+          <button
+            onclick="checkPST('q1_4', true, '2y-3')"
+            class="submit-btn mr-2"
+          >
+            Yes
+          </button>
+          <button
+            onclick="provideFeedback('q1_4_feedback', 'Incorrect. Remember to check the square root of the first term (4y²).', false)"
+            class="submit-btn bg-red-600 hover:bg-red-700"
+          >
+            No
+          </button>
+          <div id="q1_4_feedback" class="feedback" style="display: none"></div>
+        </div>
+      </div>
+
+      <hr class="my-8" />
+
+      <div class="section">
+        <h2>Section 2: Factor the Perfect Square Trinomials ⚙️</h2>
+        <p>
+          If the following are perfect square trinomials, factor them into the
+          form <span class="math-formula">(a+b)<sup>2</sup></span> or
+          <span class="math-formula">(a-b)<sup>2</sup></span
+          >.
+        </p>
+
+        <div class="question-block" id="q2_1">
+          <p>
+            1. <span class="math-formula">x<sup>2</sup> + 14x + 49</span>
+          </p>
+          <input
+            type="text"
+            id="q2_1_ans"
+            class="input-field"
+            placeholder="(a+b)^2"
+          />
+          <button onclick="checkFactor('q2_1', '(x+7)^2')" class="submit-btn">
+            Check Answer
+          </button>
+          <div id="q2_1_feedback" class="feedback" style="display: none"></div>
+        </div>
+
+        <div class="question-block" id="q2_2">
+          <p>
+            2. <span class="math-formula">m<sup>2</sup> - 18m + 81</span>
+          </p>
+          <input
+            type="text"
+            id="q2_2_ans"
+            class="input-field"
+            placeholder="(a-b)^2"
+          />
+          <button onclick="checkFactor('q2_2', '(m-9)^2')" class="submit-btn">
+            Check Answer
+          </button>
+          <div id="q2_2_feedback" class="feedback" style="display: none"></div>
+        </div>
+
+        <div class="question-block" id="q2_3">
+          <p>
+            3. <span class="math-formula">9k<sup>2</sup> + 24k + 16</span>
+          </p>
+          <input
+            type="text"
+            id="q2_3_ans"
+            class="input-field"
+            placeholder="(a+b)^2"
+          />
+          <button onclick="checkFactor('q2_3', '(3k+4)^2')" class="submit-btn">
+            Check Answer
+          </button>
+          <div id="q2_3_feedback" class="feedback" style="display: none"></div>
+        </div>
+      </div>
+
+      <hr class="my-8" />
+
+      <div class="section">
+        <h2>Section 3: Find the Missing Term! 🧩</h2>
+        <p>
+          Find the value of 'c' that makes the expression a perfect square
+          trinomial. Then, write the factored form.
+        </p>
+
+        <div class="question-block" id="q3_1">
+          <p>
+            1. <span class="math-formula">x<sup>2</sup> + 12x + c</span>
+          </p>
+          c =
+          <input
+            type="text"
+            id="q3_1_c"
+            class="input-field w-20"
+            placeholder="value of c"
+          />
+          Factored:
+          <input
+            type="text"
+            id="q3_1_factor"
+            class="input-field"
+            placeholder="(a+b)^2"
+          />
+          <button
+            onclick="checkMissingTerm('q3_1', 36, '(x+6)^2')"
+            class="submit-btn"
+          >
+            Check Answer
+          </button>
+          <div id="q3_1_feedback" class="feedback" style="display: none"></div>
+        </div>
+
+        <div class="question-block" id="q3_2">
+          <p>
+            2. <span class="math-formula">x<sup>2</sup> - 16x + c</span>
+          </p>
+          c =
+          <input
+            type="text"
+            id="q3_2_c"
+            class="input-field w-20"
+            placeholder="value of c"
+          />
+          Factored:
+          <input
+            type="text"
+            id="q3_2_factor"
+            class="input-field"
+            placeholder="(a-b)^2"
+          />
+          <button
+            onclick="checkMissingTerm('q3_2', 64, '(x-8)^2')"
+            class="submit-btn"
+          >
+            Check Answer
+          </button>
+          <div id="q3_2_feedback" class="feedback" style="display: none"></div>
+        </div>
+
+        <div class="question-block" id="q3_3">
+          <p>
+            3. <span class="math-formula">x<sup>2</sup> + 20x + c</span>
+          </p>
+          c =
+          <input
+            type="text"
+            id="q3_3_c"
+            class="input-field w-20"
+            placeholder="value of c"
+          />
+          Factored:
+          <input
+            type="text"
+            id="q3_3_factor"
+            class="input-field"
+            placeholder="(a+b)^2"
+          />
+          <button
+            onclick="checkMissingTerm('q3_3', 100, '(x+10)^2')"
+            class="submit-btn"
+          >
+            Check Answer
+          </button>
+          <div id="q3_3_feedback" class="feedback" style="display: none"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Helper function to display feedback
+      function provideFeedback(feedbackElementId, message, isCorrect) {
+        const feedbackDiv = document.getElementById(feedbackElementId);
+        feedbackDiv.textContent = message;
+        feedbackDiv.className =
+          "feedback " + (isCorrect ? "correct" : "incorrect");
+        feedbackDiv.style.display = "block";
+      }
+
+      // Section 1: Check if it's a PST
+      function checkPST(questionId, isActuallyPST, factoredFormIfPST) {
+        const feedbackId = questionId + "_feedback";
+        if (isActuallyPST) {
+          provideFeedback(
+            feedbackId,
+            "Correct! This is a perfect square trinomial. It factors to " +
+              factoredFormIfPST +
+              "^2.",
+            true
+          );
+        } else {
+          provideFeedback(
+            feedbackId,
+            "Correct! This is NOT a perfect square trinomial.",
+            true
+          );
+        }
+      }
+
+      // Overload checkPST for the "No" button when it's not a PST
+      // This is a bit simplified; a more robust solution might involve passing the user's choice.
+      // For "No" button when it IS a PST, the generic provideFeedback is used from the button's onclick.
+
+      // Section 2: Check factored form
+      function checkFactor(questionId, correctAnswer) {
+        const answerInput = document.getElementById(questionId + "_ans");
+        const userAnswer = answerInput.value.trim().replace(/\s+/g, ""); // Remove spaces
+        const feedbackId = questionId + "_feedback";
+        // Normalize user answer: remove outer parentheses if they only add one pair
+        let normalizedUserAnswer = userAnswer;
+        if (userAnswer.startsWith("(") && userAnswer.endsWith(")")) {
+          // Check if it's just one layer of parentheses, e.g. (x+3)^2 vs ((x+3))^2
+          let temp = userAnswer.substring(1, userAnswer.length - 1);
+          if (!temp.includes("(") && !temp.includes(")")) {
+            // This logic is too simple and might fail for complex cases like ((a+b)+(c+d))^2
+            // For this exercise, we assume simple (term +/- term)^2
+          }
+        }
+
+        // A more robust check would be to parse the expression, but for simplicity, we'll do a string comparison.
+        // We allow for (x+7)^2 or (x + 7)^2 etc.
+        // A simple way to normalize for this exercise:
+        const normalizedCorrectAnswer = correctAnswer.replace(/\s+/g, "");
+
+        if (
+          normalizedUserAnswer.toLowerCase() ===
+          normalizedCorrectAnswer.toLowerCase()
+        ) {
+          provideFeedback(feedbackId, "Correct! Well done. 🎉", true);
+        } else {
+          provideFeedback(
+            feedbackId,
+            "Not quite. The correct factored form is " +
+              correctAnswer +
+              ". Keep trying!",
+            false
+          );
+        }
+      }
+
+      // Section 3: Check missing term and factored form
+      function checkMissingTerm(questionId, correctC, correctFactor) {
+        const cInput = document.getElementById(questionId + "_c");
+        const factorInput = document.getElementById(questionId + "_factor");
+        const feedbackId = questionId + "_feedback";
+
+        const userC = parseInt(cInput.value.trim());
+        const userFactor = factorInput.value.trim().replace(/\s+/g, "");
+        const normalizedCorrectFactor = correctFactor.replace(/\s+/g, "");
+
+        let cIsCorrect = userC === correctC;
+        let factorIsCorrect =
+          userFactor.toLowerCase() === normalizedCorrectFactor.toLowerCase();
+
+        if (cIsCorrect && factorIsCorrect) {
+          provideFeedback(
+            feedbackId,
+            "Excellent! Both c and the factored form are correct. 👍",
+            true
+          );
+        } else if (cIsCorrect && !factorIsCorrect) {
+          provideFeedback(
+            feedbackId,
+            "The value of c = " +
+              correctC +
+              " is correct, but the factored form is " +
+              correctFactor +
+              ". Check your factoring.",
+            false
+          );
+        } else if (!cIsCorrect && factorIsCorrect) {
+          provideFeedback(
+            feedbackId,
+            "The factored form is correct, but c should be " +
+              correctC +
+              ". Remember c = (b/2)^2.",
+            false
+          );
+        } else {
+          provideFeedback(
+            feedbackId,
+            "Hmm, check both your value for c (should be " +
+              correctC +
+              ") and the factored form (should be " +
+              correctFactor +
+              ").",
+            false
+          );
+        }
+      }
+
+      // Small utility to handle PST "No" button clicks when the answer IS a PST
+      // This is used if the user clicks "No" on a question that IS a PST.
+      // The checkPST function handles the "Yes" click correctly.
+      // The generic provideFeedback is used directly in the HTML for "No" when it's NOT a PST.
+    </script>
+    <!-- 
+        Comments:
+        - This HTML provides interactive practice for perfect square trinomials.
+        - Section 1: Identifying PSTs.
+        - Section 2: Factoring PSTs.
+        - Section 3: Finding the missing term to complete a square.
+        - Tailwind CSS is used for styling.
+        - JavaScript is used for basic interactivity and feedback.
+        - Feedback messages guide the student.
+        - The math formulas are represented using simple HTML and CSS for clarity.
+        - Input sanitization for answers is basic; for a real application, it would need to be more robust.
+    -->
+  </body>
+</html>

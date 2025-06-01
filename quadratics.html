@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gemini API Interface</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 20px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 100px;
+        margin-bottom: 10px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 8px;
+      }
+      button {
+        padding: 10px 15px;
+        cursor: pointer;
+      }
+      #responseArea {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Local Gemini API Interface</h1>
+
+    <label for="apiKey">Gemini API Key:</label>
+    <input type="password" id="apiKey" placeholder="Enter your API Key here" />
+
+    <label for="prompt">Enter your prompt:</label>
+    <textarea
+      id="prompt"
+      placeholder="e.g., Generate a 10-question quiz on quadratics..."
+    ></textarea>
+
+    <button onclick="callGeminiApi()">Send Prompt</button>
+
+    <h2>API Response:</h2>
+    <div id="responseArea">Awaiting response...</div>
+
+    <script>
+      async function callGeminiApi() {
+        const apiKey = document.getElementById("apiKey").value;
+        const userPrompt = document.getElementById("prompt").value;
+        const responseArea = document.getElementById("responseArea");
+
+        if (!apiKey) {
+          responseArea.textContent = "Error: API Key is missing.";
+          return;
+        }
+        if (!userPrompt) {
+          responseArea.textContent = "Error: Prompt is missing.";
+          return;
+        }
+
+        // NOTE: Consult the official Gemini API documentation for the correct model and endpoint.
+        // This is a general example for generative content.
+        const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`;
+
+        responseArea.textContent = "Sending request, please wait...";
+
+        try {
+          const requestBody = {
+            contents: [
+              {
+                parts: [
+                  {
+                    text: userPrompt,
+                  },
+                ],
+              },
+            ],
+            // You might need to add generationConfig, safetySettings etc.
+            // as per the API documentation and your needs.
+          };
+
+          const response = await fetch(apiEndpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": apiKey, // Common header for Gemini API key
+            },
+            body: JSON.stringify(requestBody),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => null); // Try to parse error
+            let errorMessage = `API Error: ${response.status} ${response.statusText}`;
+            if (errorData && errorData.error && errorData.error.message) {
+              errorMessage += ` - ${errorData.error.message}`;
+            }
+            throw new Error(errorMessage);
+          }
+
+          const data = await response.json();
+
+          // Process and display the response.
+          // For a simple text response from gemini-pro, it might be in:
+          // data.candidates[0].content.parts[0].text
+          // For quizzes in the <immersive> format, it would be more complex.
+          if (
+            data.candidates &&
+            data.candidates[0] &&
+            data.candidates[0].content &&
+            data.candidates[0].content.parts &&
+            data.candidates[0].content.parts[0]
+          ) {
+            responseArea.textContent = JSON.stringify(
+              data.candidates[0].content.parts[0],
+              null,
+              2
+            );
+            // If the response is the immersive quiz JSON, you'd get that here.
+            // You would then need much more JavaScript to parse this JSON
+            // and render it as an interactive HTML quiz.
+          } else {
+            responseArea.textContent = JSON.stringify(data, null, 2); // Display full response if structure is different
+          }
+        } catch (error) {
+          console.error("Error calling Gemini API:", error);
+          responseArea.textContent = `Error: ${error.message}`;
+        }
+      }
+    </script>
+  </body>
+</html>
